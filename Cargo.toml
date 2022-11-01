@@ -6,6 +6,7 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/ItsEthra/egui-dropdown"
 authors = ["ItsEthra"]
+readme = "README.md"
 
 [dependencies]
 egui = "0.19"
