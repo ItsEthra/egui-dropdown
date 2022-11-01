@@ -1,7 +1,7 @@
 # egui-dropdown
 Dropdown list for egui.
 
-![](exampels/showcase1.png)
+![](media/showcase1.png)
 
 # Installation
 ```toml
