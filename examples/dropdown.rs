@@ -2,7 +2,6 @@ use eframe::{App, Frame, NativeOptions};
 use egui::Context;
 use egui_dropdown::DropDownBox;
 
-#[derive(Default)]
 struct ExampleApp {
     items: Vec<String>,
     buf: String,
@@ -16,6 +15,7 @@ impl App for ExampleApp {
                     &self.items,
                     "test_dropbox",
                     &mut self.buf,
+                    |ui, text| ui.selectable_label(false, text),
                 ));
 
                 if ui.button("Add").clicked() {
@@ -30,6 +30,16 @@ fn main() {
     eframe::run_native(
         "egui-dropdown",
         NativeOptions::default(),
-        Box::new(|_| Box::new(ExampleApp::default())),
+        Box::new(|_| {
+            Box::new(ExampleApp {
+                items: vec![
+                    "First".into(),
+                    "Second".into(),
+                    "Third".into(),
+                    "Other".into(),
+                ],
+                buf: String::new(),
+            })
+        }),
     );
 }
