@@ -1,0 +1,14 @@
+[package]
+name = "egui-dropdown"
+description = "An actual dropdown list for egui"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/ItsEthra/egui-dropdown"
+authors = ["ItsEthra"]
+
+[dependencies]
+egui = "0.19"
+
+[dev-dependencies]
+eframe = "0.19"
