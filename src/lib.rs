@@ -50,7 +50,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
 
         let mut r = ui.text_edit_singleline(buf);
         if r.gained_focus() {
-            ui.memory().open_popup(popup_id);
+            ui.memory_mut(|m| m.open_popup(popup_id));
         }
 
         let mut changed = false;
@@ -65,7 +65,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
                     *buf = text.to_owned();
                     changed = true;
 
-                    ui.memory().close_popup();
+                    ui.memory_mut(|m| m.close_popup());
                 }
             }
         });

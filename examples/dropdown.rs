@@ -1,5 +1,5 @@
 use eframe::{App, Frame, NativeOptions};
-use egui::{Context, Widget};
+use egui::Context;
 use egui_dropdown::DropDownBox;
 
 struct ExampleApp {
@@ -11,10 +11,12 @@ impl App for ExampleApp {
     fn update(&mut self, ctx: &Context, _: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                DropDownBox::from_iter(&self.items, "test_dropbox", &mut self.buf, |ui, text| {
-                    ui.selectable_label(false, text)
-                })
-                .ui(ui);
+                ui.add(DropDownBox::from_iter(
+                    &self.items,
+                    "test_dropbox",
+                    &mut self.buf,
+                    |ui, text| ui.selectable_label(false, text),
+                ));
 
                 if ui.button("Add").clicked() {
                     self.items.push(self.buf.clone());
@@ -39,5 +41,6 @@ fn main() {
                 buf: String::new(),
             })
         }),
-    );
+    )
+    .unwrap();
 }
