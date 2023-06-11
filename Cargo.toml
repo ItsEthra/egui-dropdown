@@ -9,7 +9,7 @@ authors = ["ItsEthra"]
 readme = "README.md"
 
 [dependencies]
-egui = "0.21"
+egui = "0.22"
 
 [dev-dependencies]
-eframe = "0.21"
+eframe = "0.22"
