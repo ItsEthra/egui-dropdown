@@ -2,7 +2,7 @@
 
 #![warn(missing_docs)]
 
-use egui::{Id, Response, Ui, Widget};
+use egui::{Id, Response, TextEdit, Ui, Widget, WidgetText};
 use std::hash::Hash;
 
 /// Dropdown widget
@@ -16,6 +16,7 @@ pub struct DropDownBox<
     popup_id: Id,
     display: F,
     it: I,
+    hint_text: WidgetText,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -33,7 +34,14 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             it: it.into_iter(),
             display,
             buf,
+            hint_text: WidgetText::default(),
         }
+    }
+
+    /// Add a hint text to the Text Edit
+    pub fn hint_text(mut self, hint_text: impl Into<WidgetText>) -> Self {
+        self.hint_text = hint_text.into();
+        self
     }
 }
 
@@ -46,9 +54,10 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             buf,
             it,
             mut display,
+            hint_text,
         } = self;
 
-        let mut r = ui.text_edit_singleline(buf);
+        let mut r = ui.add(TextEdit::singleline(buf).hint_text(hint_text));
         if r.gained_focus() {
             ui.memory_mut(|m| m.open_popup(popup_id));
         }
