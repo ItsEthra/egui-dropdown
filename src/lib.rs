@@ -67,7 +67,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             egui::ScrollArea::vertical().show(ui, |ui| {
                 for var in it {
                     let text = var.as_ref();
-                    if !buf.is_empty() && !text.contains(&*buf) {
+                    if !buf.is_empty() && !text.to_lowercase().contains(&buf.to_lowercase()) {
                         continue;
                     }
 
