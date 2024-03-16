@@ -2,7 +2,10 @@
 
 #![warn(missing_docs)]
 
-use egui::{Id, Response, TextEdit, Ui, Widget, WidgetText};
+use egui::{
+    text::{CCursor, CCursorRange},
+    Id, Response, TextEdit, Ui, Widget, WidgetText,
+};
 use std::hash::Hash;
 
 /// Dropdown widget
@@ -18,6 +21,7 @@ pub struct DropDownBox<
     it: I,
     hint_text: WidgetText,
     filter_by_input: bool,
+    select_on_focus: bool,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -37,6 +41,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             buf,
             hint_text: WidgetText::default(),
             filter_by_input: true,
+            select_on_focus: false,
         }
     }
 
@@ -49,6 +54,12 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
     /// Determine wether to filter box items based on what is in the Text Edit already
     pub fn filter_by_input(mut self, filter_by_input: bool) -> Self {
         self.filter_by_input = filter_by_input;
+        self
+    }
+
+    /// Determine wether to select the text when the Text Edit gains focus
+    pub fn select_on_focus(mut self, select_on_focus: bool) -> Self {
+        self.select_on_focus = select_on_focus;
         self
     }
 }
@@ -64,10 +75,24 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             mut display,
             hint_text,
             filter_by_input,
+            select_on_focus,
         } = self;
 
-        let mut r = ui.add(TextEdit::singleline(buf).hint_text(hint_text));
+        let edit = TextEdit::singleline(buf).hint_text(hint_text);
+        let mut edit_output = edit.show(ui);
+        // let mut r = ui.add(edit);
+        let mut r = edit_output.response;
         if r.gained_focus() {
+            if select_on_focus {
+                edit_output
+                    .state
+                    .cursor
+                    .set_char_range(Some(CCursorRange::two(
+                        CCursor::new(0),
+                        CCursor::new(buf.len()),
+                    )));
+                edit_output.state.store(ui.ctx(), r.id);
+            }
             ui.memory_mut(|m| m.open_popup(popup_id));
         }
 

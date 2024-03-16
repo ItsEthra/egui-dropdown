@@ -11,12 +11,20 @@ impl App for ExampleApp {
     fn update(&mut self, ctx: &Context, _: &mut Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.add(DropDownBox::from_iter(
-                    &self.items,
-                    "test_dropbox",
-                    &mut self.buf,
-                    |ui, text| ui.selectable_label(false, text),
-                ));
+                ui.add(
+                    DropDownBox::from_iter(
+                        &self.items,
+                        "test_dropbox",
+                        &mut self.buf,
+                        |ui, text| ui.selectable_label(false, text),
+                    )
+                    // choose wether to filter the box items based on what is in the text edit already
+                    // default is true when this is not used
+                    .filter_by_input(false)
+                    // choose wether to select all text in the text edit when it gets focused
+                    // default is false when this is not used
+                    .select_on_focus(true),
+                );
 
                 if ui.button("Add").clicked() {
                     self.items.push(self.buf.clone());
