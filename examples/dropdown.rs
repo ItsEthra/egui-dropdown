@@ -23,7 +23,10 @@ impl App for ExampleApp {
                     .filter_by_input(false)
                     // choose wether to select all text in the text edit when it gets focused
                     // default is false when this is not used
-                    .select_on_focus(true),
+                    .select_on_focus(true)
+                    // passes through the desired width to the text edit
+                    // default is None internally, so TextEdit does whatever its default implements
+                    .desired_width(250.0),
                 );
 
                 if ui.button("Add").clicked() {

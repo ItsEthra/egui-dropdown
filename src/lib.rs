@@ -22,6 +22,7 @@ pub struct DropDownBox<
     hint_text: WidgetText,
     filter_by_input: bool,
     select_on_focus: bool,
+    desired_width: Option<f32>,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -42,6 +43,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             hint_text: WidgetText::default(),
             filter_by_input: true,
             select_on_focus: false,
+            desired_width: None,
         }
     }
 
@@ -62,6 +64,12 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         self.select_on_focus = select_on_focus;
         self
     }
+
+    /// Passes through the desired width value to the underlying Text Edit
+    pub fn desired_width(mut self, desired_width: f32) -> Self {
+        self.desired_width = desired_width.into();
+        self
+    }
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> Widget
@@ -76,11 +84,14 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             hint_text,
             filter_by_input,
             select_on_focus,
+            desired_width,
         } = self;
 
-        let edit = TextEdit::singleline(buf).hint_text(hint_text);
+        let mut edit = TextEdit::singleline(buf).hint_text(hint_text);
+        if let Some(dw) = desired_width {
+            edit = edit.desired_width(dw);
+        }
         let mut edit_output = edit.show(ui);
-        // let mut r = ui.add(edit);
         let mut r = edit_output.response;
         if r.gained_focus() {
             if select_on_focus {
