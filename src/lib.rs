@@ -17,6 +17,7 @@ pub struct DropDownBox<
     display: F,
     it: I,
     hint_text: WidgetText,
+    filter_by_input: bool,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -35,12 +36,19 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             display,
             buf,
             hint_text: WidgetText::default(),
+            filter_by_input: true,
         }
     }
 
     /// Add a hint text to the Text Edit
     pub fn hint_text(mut self, hint_text: impl Into<WidgetText>) -> Self {
         self.hint_text = hint_text.into();
+        self
+    }
+
+    /// Determine wether to filter box items based on what is in the Text Edit already
+    pub fn filter_by_input(mut self, filter_by_input: bool) -> Self {
+        self.filter_by_input = filter_by_input;
         self
     }
 }
@@ -55,6 +63,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             it,
             mut display,
             hint_text,
+            filter_by_input,
         } = self;
 
         let mut r = ui.add(TextEdit::singleline(buf).hint_text(hint_text));
@@ -67,7 +76,10 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             egui::ScrollArea::vertical().show(ui, |ui| {
                 for var in it {
                     let text = var.as_ref();
-                    if !buf.is_empty() && !text.to_lowercase().contains(&buf.to_lowercase()) {
+                    if filter_by_input
+                        && !buf.is_empty()
+                        && !text.to_lowercase().contains(&buf.to_lowercase())
+                    {
                         continue;
                     }
 
