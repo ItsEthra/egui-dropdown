@@ -53,13 +53,13 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         self
     }
 
-    /// Determine wether to filter box items based on what is in the Text Edit already
+    /// Determine whether to filter box items based on what is in the Text Edit already
     pub fn filter_by_input(mut self, filter_by_input: bool) -> Self {
         self.filter_by_input = filter_by_input;
         self
     }
 
-    /// Determine wether to select the text when the Text Edit gains focus
+    /// Determine whether to select the text when the Text Edit gains focus
     pub fn select_on_focus(mut self, select_on_focus: bool) -> Self {
         self.select_on_focus = select_on_focus;
         self

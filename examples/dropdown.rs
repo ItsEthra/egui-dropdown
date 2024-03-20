@@ -18,10 +18,10 @@ impl App for ExampleApp {
                         &mut self.buf,
                         |ui, text| ui.selectable_label(false, text),
                     )
-                    // choose wether to filter the box items based on what is in the text edit already
+                    // choose whether to filter the box items based on what is in the text edit already
                     // default is true when this is not used
-                    .filter_by_input(false)
-                    // choose wether to select all text in the text edit when it gets focused
+                    .filter_by_input(true)
+                    // choose whether to select all text in the text edit when it gets focused
                     // default is false when this is not used
                     .select_on_focus(true)
                     // passes through the desired width to the text edit
