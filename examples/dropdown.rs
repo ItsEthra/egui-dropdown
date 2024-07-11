@@ -42,7 +42,7 @@ fn main() {
         "egui-dropdown",
         NativeOptions::default(),
         Box::new(|_| {
-            Box::new(ExampleApp {
+            Ok(Box::new(ExampleApp {
                 items: vec![
                     "First".into(),
                     "Second".into(),
@@ -50,7 +50,7 @@ fn main() {
                     "Other".into(),
                 ],
                 buf: String::new(),
-            })
+            }))
         }),
     )
     .unwrap();
