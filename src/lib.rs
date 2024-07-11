@@ -108,7 +108,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         }
 
         let mut changed = false;
-        egui::popup_below_widget(ui, popup_id, &r, |ui| {
+        egui::popup_below_widget(ui, popup_id, &r, egui::PopupCloseBehavior::CloseOnClick, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 for var in it {
                     let text = var.as_ref();
