@@ -108,26 +108,32 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         }
 
         let mut changed = false;
-        egui::popup_below_widget(ui, popup_id, &r, egui::PopupCloseBehavior::CloseOnClick, |ui| {
-            egui::ScrollArea::vertical().show(ui, |ui| {
-                for var in it {
-                    let text = var.as_ref();
-                    if filter_by_input
-                        && !buf.is_empty()
-                        && !text.to_lowercase().contains(&buf.to_lowercase())
-                    {
-                        continue;
-                    }
+        egui::popup_below_widget(
+            ui,
+            popup_id,
+            &r,
+            egui::PopupCloseBehavior::CloseOnClick,
+            |ui| {
+                egui::ScrollArea::vertical().show(ui, |ui| {
+                    for var in it {
+                        let text = var.as_ref();
+                        if filter_by_input
+                            && !buf.is_empty()
+                            && !text.to_lowercase().contains(&buf.to_lowercase())
+                        {
+                            continue;
+                        }
 
-                    if display(ui, text).clicked() {
-                        *buf = text.to_owned();
-                        changed = true;
+                        if display(ui, text).clicked() {
+                            *buf = text.to_owned();
+                            changed = true;
 
-                        ui.memory_mut(|m| m.close_popup());
+                            ui.memory_mut(|m| m.close_popup());
+                        }
                     }
-                }
-            });
-        });
+                });
+            },
+        );
 
         if changed {
             r.mark_changed();
