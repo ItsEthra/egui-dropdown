@@ -53,5 +53,5 @@ fn main() {
             }))
         }),
     )
-    .unwrap();
+    .expect("Failed to run eframe");
 }
