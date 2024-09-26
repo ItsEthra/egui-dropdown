@@ -23,6 +23,7 @@ pub struct DropDownBox<
     filter_by_input: bool,
     select_on_focus: bool,
     desired_width: Option<f32>,
+    max_height: Option<f32>,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -44,6 +45,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             filter_by_input: true,
             select_on_focus: false,
             desired_width: None,
+            max_height: None,
         }
     }
 
@@ -70,6 +72,12 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         self.desired_width = desired_width.into();
         self
     }
+
+    /// Set a maximum height limit for the opened popup
+    pub fn max_height(mut self, height: f32) -> Self {
+        self.max_height = height.into();
+        self
+    }
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> Widget
@@ -85,6 +93,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             filter_by_input,
             select_on_focus,
             desired_width,
+            max_height,
         } = self;
 
         let mut edit = TextEdit::singleline(buf).hint_text(hint_text);
@@ -114,6 +123,9 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             &r,
             egui::PopupCloseBehavior::CloseOnClick,
             |ui| {
+                if let Some(max) = max_height {
+                    ui.set_max_height(max);
+                }
                 egui::ScrollArea::vertical().show(ui, |ui| {
                     for var in it {
                         let text = var.as_ref();
