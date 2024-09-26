@@ -4,7 +4,7 @@
 
 use egui::{
     text::{CCursor, CCursorRange},
-    Id, Response, TextEdit, Ui, Widget, WidgetText,
+    Id, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
 };
 use std::hash::Hash;
 
@@ -126,24 +126,27 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
                 if let Some(max) = max_height {
                     ui.set_max_height(max);
                 }
-                egui::ScrollArea::vertical().show(ui, |ui| {
-                    for var in it {
-                        let text = var.as_ref();
-                        if filter_by_input
-                            && !buf.is_empty()
-                            && !text.to_lowercase().contains(&buf.to_lowercase())
-                        {
-                            continue;
-                        }
 
-                        if display(ui, text).clicked() {
-                            *buf = text.to_owned();
-                            changed = true;
+                ScrollArea::vertical()
+                    .max_height(f32::INFINITY)
+                    .show(ui, |ui| {
+                        for var in it {
+                            let text = var.as_ref();
+                            if filter_by_input
+                                && !buf.is_empty()
+                                && !text.to_lowercase().contains(&buf.to_lowercase())
+                            {
+                                continue;
+                            }
 
-                            ui.memory_mut(|m| m.close_popup());
+                            if display(ui, text).clicked() {
+                                *buf = text.to_owned();
+                                changed = true;
+
+                                ui.memory_mut(|m| m.close_popup());
+                            }
                         }
-                    }
-                });
+                    });
             },
         );
 

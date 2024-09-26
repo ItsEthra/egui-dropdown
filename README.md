@@ -6,7 +6,7 @@ Dropdown list for egui.
 # Installation
 ```toml
 [dependencies]
-egui-dropdown = "0.10"
+egui-dropdown = "0.11"
 ```
 
 # Usage
