@@ -7,6 +7,8 @@ use egui::{
     Id, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
 };
 use std::hash::Hash;
+#[cfg(feature = "unidecode")]
+use unidecode::unidecode;
 
 /// Dropdown widget
 pub struct DropDownBox<
@@ -24,6 +26,7 @@ pub struct DropDownBox<
     select_on_focus: bool,
     desired_width: Option<f32>,
     max_height: Option<f32>,
+    ignore_accent_marks: bool,
 }
 
 impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>>
@@ -46,6 +49,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
             select_on_focus: false,
             desired_width: None,
             max_height: None,
+            ignore_accent_marks: false,
         }
     }
 
@@ -78,6 +82,13 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
         self.max_height = height.into();
         self
     }
+
+    /// Set whether to ignore accent marks when filtering items
+    #[cfg(feature = "unidecode")]
+    pub fn ignore_accent_marks(mut self, ignore_accent_marks: bool) -> Self {
+        self.ignore_accent_marks = ignore_accent_marks;
+        self
+    }
 }
 
 impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> Widget
@@ -94,6 +105,7 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
             select_on_focus,
             desired_width,
             max_height,
+            ignore_accent_marks,
         } = self;
 
         let mut edit = TextEdit::singleline(buf).hint_text(hint_text);
@@ -134,7 +146,7 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
                             let text = var.as_ref();
                             if filter_by_input
                                 && !buf.is_empty()
-                                && !text.to_lowercase().contains(&buf.to_lowercase())
+                                && !normalize(text, ignore_accent_marks).contains(&normalize(buf, ignore_accent_marks))
                             {
                                 continue;
                             }
@@ -156,4 +168,18 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
 
         r
     }
+}
+
+#[cfg(feature = "unidecode")]
+fn normalize(text: &str, ignore_accent_marks: bool) -> String {
+    if ignore_accent_marks {
+        unidecode(text).to_lowercase()
+    } else {
+        text.to_lowercase()
+    }
+}
+
+#[cfg(not(feature = "unidecode"))]
+fn normalize(text: &str, _: bool) -> String {
+    text.to_lowercase()
 }

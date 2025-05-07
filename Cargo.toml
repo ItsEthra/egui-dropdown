@@ -9,8 +9,12 @@ authors = ["ItsEthra"]
 readme = "README.md"
 exclude = ["/examples", "/media"]
 
+[features]
+unidecode = ["dep:unidecode"]
+
 [dependencies]
 egui = { version = "0.31", default-features = false }
+unidecode = { version = "0.3.0", optional = true }
 
 [dev-dependencies]
 eframe = "0.31"
