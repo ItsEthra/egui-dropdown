@@ -113,42 +113,42 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
                     )));
                 edit_output.state.store(ui.ctx(), r.id);
             }
-            ui.memory_mut(|m| m.open_popup(popup_id));
+            egui::Popup::open_id(ui.ctx(), popup_id);
         }
 
         let mut changed = false;
-        egui::popup_below_widget(
-            ui,
+        egui::Popup::new(
             popup_id,
-            &r,
-            egui::PopupCloseBehavior::CloseOnClick,
-            |ui| {
-                if let Some(max) = max_height {
-                    ui.set_max_height(max);
-                }
+            ui.ctx().clone(),
+            r.rect.left_bottom(),
+            ui.layer_id(),
+        )
+        .show(|ui| {
+            if let Some(max) = max_height {
+                ui.set_max_height(max);
+            }
 
-                ScrollArea::vertical()
-                    .max_height(f32::INFINITY)
-                    .show(ui, |ui| {
-                        for var in it {
-                            let text = var.as_ref();
-                            if filter_by_input
-                                && !buf.is_empty()
-                                && !text.to_lowercase().contains(&buf.to_lowercase())
-                            {
-                                continue;
-                            }
-
-                            if display(ui, text).clicked() {
-                                *buf = text.to_owned();
-                                changed = true;
-
-                                ui.memory_mut(|m| m.close_popup());
-                            }
+            ScrollArea::vertical()
+                .max_height(f32::INFINITY)
+                .show(ui, |ui| {
+                    for var in it {
+                        let text = var.as_ref();
+                        if filter_by_input
+                            && !buf.is_empty()
+                            && !text.to_lowercase().contains(&buf.to_lowercase())
+                        {
+                            continue;
                         }
-                    });
-            },
-        );
+
+                        if display(ui, text).clicked() {
+                            *buf = text.to_owned();
+                            changed = true;
+
+                            egui::Popup::close_id(ui.ctx(), popup_id);
+                        }
+                    }
+                });
+        });
 
         if changed {
             r.mark_changed();
