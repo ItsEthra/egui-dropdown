@@ -120,9 +120,10 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
         egui::Popup::new(
             popup_id,
             ui.ctx().clone(),
-            r.rect.left_bottom(),
+            &r,
             ui.layer_id(),
         )
+        .close_behavior(egui::PopupCloseBehavior::CloseOnClick)
         .show(|ui| {
             if let Some(max) = max_height {
                 ui.set_max_height(max);
