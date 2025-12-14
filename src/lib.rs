@@ -3,8 +3,7 @@
 #![warn(missing_docs)]
 
 use egui::{
-    text::{CCursor, CCursorRange},
-    Id, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
+    Id, RectAlign, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText, text::{CCursor, CCursorRange}
 };
 use std::hash::Hash;
 
@@ -113,16 +112,13 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
                     )));
                 edit_output.state.store(ui.ctx(), r.id);
             }
+
             egui::Popup::open_id(ui.ctx(), popup_id);
         }
 
         let mut changed = false;
-        egui::Popup::new(
-            popup_id,
-            ui.ctx().clone(),
-            &r,
-            ui.layer_id(),
-        )
+        egui::Popup::menu(&r)
+        .align(RectAlign::BOTTOM_START)
         .close_behavior(egui::PopupCloseBehavior::CloseOnClick)
         .show(|ui| {
             if let Some(max) = max_height {
