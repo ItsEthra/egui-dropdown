@@ -152,6 +152,6 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
             r.mark_changed();
         }
 
-        r.into()
+        r.response
     }
 }
