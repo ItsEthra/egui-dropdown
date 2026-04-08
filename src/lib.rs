@@ -3,7 +3,8 @@
 #![warn(missing_docs)]
 
 use egui::{
-    Id, RectAlign, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText, text::{CCursor, CCursorRange}
+    text::{CCursor, CCursorRange},
+    Id, RectAlign, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
 };
 use std::hash::Hash;
 
@@ -118,39 +119,39 @@ impl<F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = V>> 
 
         let mut changed = false;
         egui::Popup::menu(&r)
-        .align(RectAlign::BOTTOM_START)
-        .close_behavior(egui::PopupCloseBehavior::CloseOnClick)
-        .show(|ui| {
-            if let Some(max) = max_height {
-                ui.set_max_height(max);
-            }
+            .align(RectAlign::BOTTOM_START)
+            .close_behavior(egui::PopupCloseBehavior::CloseOnClick)
+            .show(|ui| {
+                if let Some(max) = max_height {
+                    ui.set_max_height(max);
+                }
 
-            ScrollArea::vertical()
-                .max_height(f32::INFINITY)
-                .show(ui, |ui| {
-                    for var in it {
-                        let text = var.as_ref();
-                        if filter_by_input
-                            && !buf.is_empty()
-                            && !text.to_lowercase().contains(&buf.to_lowercase())
-                        {
-                            continue;
+                ScrollArea::vertical()
+                    .max_height(f32::INFINITY)
+                    .show(ui, |ui| {
+                        for var in it {
+                            let text = var.as_ref();
+                            if filter_by_input
+                                && !buf.is_empty()
+                                && !text.to_lowercase().contains(&buf.to_lowercase())
+                            {
+                                continue;
+                            }
+
+                            if display(ui, text).clicked() {
+                                *buf = text.to_owned();
+                                changed = true;
+
+                                egui::Popup::close_id(ui.ctx(), popup_id);
+                            }
                         }
-
-                        if display(ui, text).clicked() {
-                            *buf = text.to_owned();
-                            changed = true;
-
-                            egui::Popup::close_id(ui.ctx(), popup_id);
-                        }
-                    }
-                });
-        });
+                    });
+            });
 
         if changed {
             r.mark_changed();
         }
 
-        r
+        r.into()
     }
 }
