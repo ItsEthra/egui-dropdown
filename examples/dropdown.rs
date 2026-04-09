@@ -1,5 +1,5 @@
 use eframe::{App, Frame, NativeOptions};
-use egui::Context;
+use egui::Ui;
 use egui_dropdown::DropDownBox;
 
 struct ExampleApp {
@@ -8,8 +8,8 @@ struct ExampleApp {
 }
 
 impl App for ExampleApp {
-    fn update(&mut self, ctx: &Context, _: &mut Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut Ui, _: &mut Frame) {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             ui.horizontal(|ui| {
                 ui.add(
                     DropDownBox::from_iter(
