@@ -4,9 +4,8 @@
 
 use egui::{
     text::{CCursor, CCursorRange},
-    Id, RectAlign, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
+    AsId, Id, RectAlign, Response, ScrollArea, TextEdit, Ui, Widget, WidgetText,
 };
-use std::hash::Hash;
 
 /// Dropdown widget
 pub struct DropDownBox<
@@ -32,7 +31,7 @@ impl<'a, F: FnMut(&mut Ui, &str) -> Response, V: AsRef<str>, I: Iterator<Item = 
     /// Creates new dropdown box.
     pub fn from_iter(
         it: impl IntoIterator<IntoIter = I>,
-        id_source: impl Hash,
+        id_source: impl AsId,
         buf: &'a mut String,
         display: F,
     ) -> Self {
